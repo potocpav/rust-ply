@@ -7,14 +7,14 @@ enum Format { Ascii }
 struct Version (uint, uint);
 
 #[deriving(Show)]
-struct Element<'a> {
+pub struct ElementSpec<'a> {
 	name: &'a str,
-	count: uint,
-	props: Vec<Property<'a>>
+	pub count: uint,
+	props: Vec<PropertySpec<'a>>
 }
 
 #[deriving(Show)]
-struct Property<'a> {
+struct PropertySpec<'a> {
 	name: &'a str,
 	type_: Type
 }
@@ -29,8 +29,8 @@ enum Type {
 pub struct PLY<'a> {
 	format: Format,
 	version: Version,
-	elems: Vec<Element<'a>>,
-	data: Vec<Vec<&'a str>>
+	elems: Vec<ElementSpec<'a>>,
+	data: &'a str
 }
 
 peg! ply(r#"
@@ -41,7 +41,7 @@ parse -> super::PLY =
 	obj_info_line?
 	elems:dataspec_section newline
 	end_header_line newline
-	data:data_line**newline newline?
+	data:data
 		{{ 
 			let (f,v) = fl; 
 			super::PLY { format: f, version: v, elems: elems, data: data } 
@@ -56,26 +56,25 @@ format_line -> (super::Format, super::Version)
 obj_info_line -> &str
 	= "obj_info" white info:raw_string newline { info }
 	
-dataspec_section -> Vec<super::Element>
+dataspec_section -> Vec<super::ElementSpec>
 	= element_section**newline
 
-element_section -> super::Element
+element_section -> super::ElementSpec
 	= e:element_line newline ps:property_line**newline
-		{ super::Element { name: e.name, count: e.count, props: ps } }
+		{ super::ElementSpec { name: e.name, count: e.count, props: ps } }
 	
-element_line -> super::Element
+element_line -> super::ElementSpec
 	= "element" white n:identifier white i:uint
-		{ super::Element { name: n, count: i, props: vec![] } }
+		{ super::ElementSpec { name: n, count: i, props: vec![] } }
 	
-property_line -> super::Property
+property_line -> super::PropertySpec
 	= "property" white t:type white n:identifier
-		{ super::Property { name: n, type_: t } }
+		{ super::PropertySpec { name: n, type_: t } }
 
 end_header_line -> () 
 	= "end_header"
 	
-data_line -> Vec<&str>
-	= white? rn:raw_num++white { rn }
+data -> &str = d:.* { match_str }
 
 
 format -> super::Format
