@@ -26,7 +26,7 @@ impl Element for Position {
 	}
 }
 
-pub fn parse<T:Element>(h: &parser::ElementSpec, 
+pub fn parse_data<T:Element>(h: &parser::ElementSpec, 
                         foo: |&parser::ElementSpec, &str| -> Option<T>, 
                     mut data: &str) -> Option<Vec<T>>
 {				 
