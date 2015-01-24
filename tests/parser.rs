@@ -2,7 +2,7 @@
 extern crate ply;
 
 // http://paulbourke.net/dataformats/ply/
-static test_str1: &'static str = r#"ply
+static TEST_STR1: &'static str = r#"ply
 format ascii 1.0
 comment author: Greg Turk
 comment object: another cube
@@ -39,24 +39,24 @@ end_header
 "#;
 
 // http://w3.impa.br/~diego/software/rply/
-static test_str2: &'static str = r#"ply
+static TEST_STR2: &'static str = r#"ply
 format ascii 1.0
 comment this is a simple file
 obj_info any data, in one line of free form text
 element vertex 3
 property float x
 property float y
-property float z 
+property float z
 element face 1
 property list uchar int vertex_indices
 end_header
 -1 0 0
  0 1 0
- 1 0 0 
+ 1 0 0
 3 0 1 2
 "#;
 
 #[test]
-fn test1() { assert!(ply::parser::parse(test_str1).is_ok()); }
+fn test1() { assert!(ply::parser::parse(TEST_STR1).is_ok()); }
 #[test]
-fn test2() { assert!(ply::parser::parse(test_str2).is_ok()); }
+fn test2() { assert!(ply::parser::parse(TEST_STR2).is_ok()); }

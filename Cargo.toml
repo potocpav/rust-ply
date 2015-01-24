@@ -5,4 +5,4 @@ version = "0.0.1"
 authors = ["Pavel Potocek <pavelpotocek@gmail.com>"]
 
 [dependencies.peg]
-git = "https://github.com/kevinmehall/rust-peg"
+git = "https://github.com/CraZySacX/rust-peg.git"
