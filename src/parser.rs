@@ -1,37 +1,37 @@
 
 
-#[deriving(Show)]
+#[derive(Debug)]
 pub enum Format { Ascii }
 
 
-#[deriving(Show)]
-struct Version (u32, u32);
+#[derive(Debug)]
+pub struct Version (u32, u32);
 
-#[deriving(Show)]
+#[derive(Debug)]
 pub struct ElementSpec {
-	name: String,
+	pub name: String,
 	pub count: u32,
-	props: Vec<PropertySpec>
+	pub props: Vec<PropertySpec>
 }
 
-#[deriving(Show)]
-struct PropertySpec {
-	name: String,
-	type_: Type
+#[derive(Debug)]
+pub struct PropertySpec {
+	pub name: String,
+	pub type_: Type
 }
 
-#[deriving(Show)]
-enum Type {
+#[derive(Debug)]
+pub enum Type {
 	Char, UChar, Short, UShort, Int, UInt, Float, Double,
 	List (Box<Type>, Box<Type>)
 }
 
-#[deriving(Show)]
+#[derive(Debug)]
 pub struct PLY {
-	format: Format,
-	version: Version,
-	elems: Vec<ElementSpec>,
-	data: String
+	pub format: Format,
+	pub version: Version,
+	pub elements: Vec<ElementSpec>,
+	pub data: String
 }
 
 peg! ply{r#"
@@ -40,12 +40,12 @@ parse -> super::PLY =
 	first_line newline
 	fl:format_line newline
 	obj_info_line?
-	elems:dataspec_section newline
+	elements:dataspec_section newline
 	end_header_line newline
 	data:data
 		{{
 			let (f,v) = fl;
-			super::PLY { format: f, version: v, elems: elems, data: data }
+			super::PLY { format: f, version: v, elements: elements, data: data }
 		}}
 
 first_line -> ()

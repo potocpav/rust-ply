@@ -3,11 +3,12 @@
 #[plugin]
 extern crate peg_syntax_ext;
 
-//use std::vec::Vector;
 use std::io::File;
 
+pub use parser::{PLY,Format,Version,ElementSpec,PropertySpec};
 
 pub mod parser;
+
 
 pub trait Element {
 	fn parse(&parser::ElementSpec, &str) -> Option<Self>;
@@ -47,7 +48,6 @@ pub fn parse_file(path_str: &str) -> Result<parser::PLY, String> {
 	let path = Path::new(path_str);
 	let mut fil = File::open(&path);
 	let text: Vec<u8> = fil.read_to_end().unwrap();
-	// let slice: &[u8] = text.as_slice();
 	let string: &str = std::str::from_utf8(&text[]).unwrap();
 
 	parser::parse(string)
