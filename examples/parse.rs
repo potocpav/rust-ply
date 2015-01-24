@@ -1,7 +1,8 @@
 
 extern crate ply;
 
-
+use ply::{PlyModel,TestObj};
+/*
 // http://paulbourke.net/dataformats/ply/
 static PLY: &'static str = r#"ply
 format ascii 1.0
@@ -43,6 +44,37 @@ end_header
 2 3 255 255 255
 3 0 255 255 255
 2 0 0 0 0
+"#; */
+
+static PLY: &'static str = r#"ply
+format ascii 1.0
+comment author: Greg Turk
+comment object: another cube
+element vertex 8
+property float x
+property float y
+property float z
+end_header
+0 0 0
+0 0 1
+0 1 1
+0 1 0
+1 0 0
+1 0 1
+1 1 1
+1 1 0
+3 0 1 2
+3 0 2 3
+4 7 6 5 4
+4 0 4 5 1
+4 1 5 6 2
+4 2 6 7 3
+4 3 7 4 0
+0 1 255 255 255
+1 2 255 255 255
+2 3 255 255 255
+3 0 255 255 255
+2 0 0 0 0
 "#;
 
 fn main() {
@@ -58,6 +90,15 @@ fn main() {
 			}
 			println!("\nData:\n");
 			println!("{}", ply.data);
+
+			//let obj: TestObj;
+			//println!("Result of object check: {:?}", Object::check(None::<TestObj>, &ply));
+
+			let res: Result<TestObj,&'static str> = PlyModel::new(&ply);
+			match res {
+				Ok(data) => println!("res: {:?}", data),
+				Err(e) => println!("Error while parsing: {}", e),
+			}
 
 		}, Err(e) => println!("E: {}", e),
 	}

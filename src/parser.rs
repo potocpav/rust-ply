@@ -10,7 +10,7 @@ pub struct Version (u32, u32);
 #[derive(Debug)]
 pub struct ElementSpec {
 	pub name: String,
-	pub count: u32,
+	pub count: usize,
 	pub props: Vec<PropertySpec>
 }
 
@@ -20,7 +20,7 @@ pub struct PropertySpec {
 	pub type_: Type
 }
 
-#[derive(Debug)]
+#[derive(Debug,PartialEq)]
 pub enum Type {
 	Char, UChar, Short, UShort, Int, UInt, Float, Double,
 	List (Box<Type>, Box<Type>)
@@ -65,7 +65,7 @@ element_section -> super::ElementSpec
 		{ super::ElementSpec { name: e.name, count: e.count, props: ps } }
 
 element_line -> super::ElementSpec
-	= "element" white n:identifier white i:uint
+	= "element" white n:identifier white i:usize
 		{ super::ElementSpec { name: n, count: i, props: vec![] } }
 
 property_line -> super::PropertySpec
@@ -82,7 +82,7 @@ format -> super::Format
 	= "ascii" { super::Format::Ascii }
 
 version -> super::Version
-	= maj:uint "." min:uint { super::Version(maj,min) }
+	= maj:u32 "." min:u32 { super::Version(maj,min) }
 
 type -> super::Type
 	= i:integraltype { i }
@@ -105,7 +105,9 @@ raw_num -> &'input str
 	= "-"? [0-9]+ "." [0-9]+ { match_str }
 	/ "-"? [0-9]+ { match_str }
 
-uint -> u32
+u32 -> u32
+	= [0-9]+ { match_str.parse().unwrap() }
+usize -> usize
 	= [0-9]+ { match_str.parse().unwrap() }
 
 raw_string -> &'input str

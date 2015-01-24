@@ -1,8 +1,12 @@
-[package]
 
+[package]
 name = "ply"
 version = "0.0.1"
 authors = ["Pavel Potocek <pavelpotocek@gmail.com>"]
 
 [dependencies.peg]
 git = "https://github.com/CraZySacX/rust-peg.git"
+
+[dependencies.ply_plugins]
+path = "plugins"
+version = "*"
