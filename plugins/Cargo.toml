@@ -1,0 +1,10 @@
+
+[package]
+name = "ply_plugins"
+version = "0.0.1"
+authors = ["Pavel Potocek <pavelpotocek@gmail.com>"]
+
+[lib]
+name = "ply_plugins"
+path = "src/lib.rs"
+plugin = true
