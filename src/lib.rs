@@ -2,17 +2,14 @@
 
 #[plugin]
 extern crate peg_syntax_ext;
-#[plugin]
-extern crate ply_plugins;
 
 use std::io::File;
 
 pub use parser::{PLY,Format,Version,ElementSpec,PropertySpec,Type};
 
 pub mod parser;
+pub mod property;
 
-#[ply_data]
-struct S;
 
 pub trait PlyModel {
 	fn new(&parser::PLY) -> Result<Self,&'static str>;
@@ -38,6 +35,15 @@ impl PlyModel for TestObj {
 			res.push(try!(Element::parse(line)));
 		}
 		Ok(TestObj {vertices: res})
+	}
+}
+
+pub trait Elements {
+	fn check(Option<Self>, &parser::ElementSpec) -> Result<(), &'static str>;
+}
+impl<T:Element> Elements for Vec<T> {
+	fn check(_dummy: Option<Self>, spec: &parser::ElementSpec) -> Result<(), &'static str> {
+		Element::check(None::<T>, spec)
 	}
 }
 

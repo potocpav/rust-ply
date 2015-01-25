@@ -1,4 +1,7 @@
+#![feature(plugin)]
 
+#[plugin]
+extern crate ply_plugins;
 extern crate ply;
 
 use ply::{PlyModel,TestObj};
@@ -63,19 +66,13 @@ end_header
 1 0 1
 1 1 1
 1 1 0
-3 0 1 2
-3 0 2 3
-4 7 6 5 4
-4 0 4 5 1
-4 1 5 6 2
-4 2 6 7 3
-4 3 7 4 0
-0 1 255 255 255
-1 2 255 255 255
-2 3 255 255 255
-3 0 255 255 255
-2 0 0 0 0
 "#;
+
+#[derive(Debug)]
+#[ply_data]
+struct S {
+	x: Vec<ply::Position>,
+}
 
 fn main() {
 	let res = ply::parser::parse(PLY);
@@ -95,6 +92,8 @@ fn main() {
 			//println!("Result of object check: {:?}", Object::check(None::<TestObj>, &ply));
 
 			let res: Result<TestObj,&'static str> = PlyModel::new(&ply);
+			let res2: Result<S, &'static str> = PlyModel::new(&ply);
+			println!("Result: {:?}", res2);
 			match res {
 				Ok(data) => println!("res: {:?}", data),
 				Err(e) => println!("Error while parsing: {}", e),
