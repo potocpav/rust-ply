@@ -86,13 +86,16 @@ fn body(ecx: &mut base::ExtCtxt, span: codemap::Span,
             let field_count = definition.fields.len();
 
             let struct_expr = ecx.expr_struct_ident(span, *self_ty,
-                fields.iter().map(|&(field_ident, _)| {
+                fields.iter().zip(definition.fields.iter())
+                             .map(|(&(field_ident, _), field_def)| {
+                    let ref field_type = field_def.node.ty;
                     let ident_str = token::get_ident(field_ident);
                     let ident_str = ident_str.get();
                     ecx.field_imm(span, field_ident, quote_expr!(ecx, {
 
                         if let Some(e) = ply.elements.iter()
                                          .filter(|&e| e.name == $ident_str).next() {
+                            try!(ply::ElementVec::check(None::<$field_type>, e));
                             let mut accum = vec![];
                             for line in e.data.iter() {
                                 let res = try!(ply::Element::parse(line.as_slice()));

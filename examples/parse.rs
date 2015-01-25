@@ -84,7 +84,6 @@ end_header
 struct S {
 	vertex: Vec<ply::Position>,
 	face: Vec<ply::Position>,
-	prd: bool,
 }
 
 fn main() {
