@@ -10,19 +10,20 @@ pub struct Version (u32, u32);
 pub struct ElementSpec {
 	pub name: String,
 	pub count: usize,
-	pub props: Vec<PropertySpec>
+	pub props: Vec<PropertySpec>,
+	pub data: Vec<String>, // individual lines of the data
 }
 
 #[derive(Debug)]
 pub struct PropertySpec {
 	pub name: String,
-	pub type_: Type
+	pub type_: Type,
 }
 
 #[derive(Debug,PartialEq)]
 pub enum Type {
 	Char, UChar, Short, UShort, Int, UInt, Float, Double,
-	List (Box<Type>, Box<Type>)
+	List (Box<Type>, Box<Type>),
 }
 
 #[derive(Debug)]
@@ -30,7 +31,18 @@ pub struct PLY {
 	pub format: Format,
 	pub version: Version,
 	pub elements: Vec<ElementSpec>,
-	pub data: String
+	//pub data: String
+}
+
+fn fill_data(elems: &mut Vec<ElementSpec>, data: &str) {
+	let mut lines: Vec<String> = data.split('\n').map(|l|l.to_string()).collect();
+	//let mut lines_iter = lines.into_iter();
+	let mut counter = 0us;
+	for i in 0..elems.len() {
+		let count = elems[i].count;
+		elems[i].data.push_all(lines.slice(counter, counter + count));
+		counter += count;
+	}
 }
 
 peg! ply{r#"
@@ -44,7 +56,9 @@ parse -> super::PLY =
 	data:data
 		{{
 			let (f,v) = fl;
-			super::PLY { format: f, version: v, elements: elements, data: data }
+			let mut elements = elements;
+			super::fill_data(&mut elements, data);
+			super::PLY { format: f, version: v, elements: elements }
 		}}
 
 first_line -> ()
@@ -61,11 +75,11 @@ dataspec_section -> Vec<super::ElementSpec>
 
 element_section -> super::ElementSpec
 	= e:element_line newline ps:property_line**newline
-		{ super::ElementSpec { name: e.name, count: e.count, props: ps } }
+		{ super::ElementSpec { name: e.name, count: e.count, props: ps, data: vec![] } }
 
 element_line -> super::ElementSpec
 	= "element" white n:identifier white i:usize
-		{ super::ElementSpec { name: n, count: i, props: vec![] } }
+		{ super::ElementSpec { name: n, count: i, props: vec![], data: vec![] } }
 
 property_line -> super::PropertySpec
 	= "property" white t:type white n:identifier
@@ -74,7 +88,7 @@ property_line -> super::PropertySpec
 end_header_line -> ()
 	= "end_header"
 
-data -> String = d:.* { match_str.to_string() }
+data -> &'input str = d:.* { match_str }
 
 
 format -> super::Format

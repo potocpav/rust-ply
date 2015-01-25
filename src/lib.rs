@@ -19,29 +19,30 @@ pub trait PlyModel {
 pub struct TestObj {
 	vertices: Vec<Position>
 }
-
+/*
 impl PlyModel for TestObj {
 	fn new(ply: &parser::PLY) -> Result<Self,&'static str> {
 		// check
-		if ply.elements.len() != 1 {
+		if ply.elements.len() != 2 {
 			return Err("Wrong number of elements.");
 		}
+
 		try!(Element::check(None::<Position>, &ply.elements[0]));
 
 		// parse
-		let mut lines: Vec<&str> = ply.data.split('\n').collect();
+		let mut lines: Vec<String> = ply.elements[0].data;
 		let mut res: Vec<Position> = Vec::with_capacity(ply.elements[0].count);
 		for &line in lines.iter().take(ply.elements[0].count) {
-			res.push(try!(Element::parse(line)));
+			res.push(try!(Element::parse(&line[])));
 		}
 		Ok(TestObj {vertices: res})
 	}
-}
+}*/
 
-pub trait Elements {
+pub trait ElementVec {
 	fn check(Option<Self>, &parser::ElementSpec) -> Result<(), &'static str>;
 }
-impl<T:Element> Elements for Vec<T> {
+impl<T:Element> ElementVec for Vec<T> {
 	fn check(_dummy: Option<Self>, spec: &parser::ElementSpec) -> Result<(), &'static str> {
 		Element::check(None::<T>, spec)
 	}

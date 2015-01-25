@@ -57,8 +57,19 @@ element vertex 8
 property float x
 property float y
 property float z
+element face 7
+property float x
+property float y
+property float z
 end_header
 0 0 0
+0 0 1
+0 1 1
+0 1 0
+1 0 0
+1 0 1
+1 1 1
+1 1 0
 0 0 1
 0 1 1
 0 1 0
@@ -71,7 +82,8 @@ end_header
 #[derive(Debug)]
 #[ply_data]
 struct S {
-	x: Vec<ply::Position>,
+	vertex: Vec<ply::Position>,
+	face: Vec<ply::Position>,
 }
 
 fn main() {
@@ -84,20 +96,21 @@ fn main() {
 				for p in e.props.iter() {
 					println!("    Property \"{}\": \t{:?}.", p.name, p.type_);
 				}
+				println!("  Data: {:?}", e.data);
 			}
-			println!("\nData:\n");
-			println!("{}", ply.data);
+		//	println!("\nData:\n");
+		//	println!("{}", ply.data);
 
 			//let obj: TestObj;
 			//println!("Result of object check: {:?}", Object::check(None::<TestObj>, &ply));
 
-			let res: Result<TestObj,&'static str> = PlyModel::new(&ply);
+		//	let res: Result<TestObj,&'static str> = PlyModel::new(&ply);
 			let res2: Result<S, &'static str> = PlyModel::new(&ply);
 			println!("Result: {:?}", res2);
-			match res {
-				Ok(data) => println!("res: {:?}", data),
-				Err(e) => println!("Error while parsing: {}", e),
-			}
+		//	match res {
+		//		Ok(data) => println!("res: {:?}", data),
+		//		Err(e) => println!("Error while parsing: {}", e),
+		//	}
 
 		}, Err(e) => println!("E: {}", e),
 	}
