@@ -1,4 +1,5 @@
 
+// Convert a type into a Type
 
 pub trait Property {
 	fn get_type() -> super::Type;

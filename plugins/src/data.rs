@@ -1,11 +1,3 @@
-//
-// This is a bit of cleanup work to clean out some old deprecated flags and
-// deprecated lint names from the compiler (they've been deprecated for quite awhile now).
-//
-// This also notably puts --pretty behind the -Z unstable-options flag
-// (where it was supposed to be previously).
-
-
 
 use syntax::ast;
 use syntax::ext::base;
@@ -23,7 +15,6 @@ pub fn ply_data(ecx: &mut base::ExtCtxt, span: codemap::Span,
                 meta_item: &ast::MetaItem, item: &ast::Item,
                 mut push: Box<FnMut(P<ast::Item>)>)
 {
-//
     generic::TraitDef {
         span: span,
         attributes: Vec::new(),
@@ -75,6 +66,7 @@ pub fn ply_data(ecx: &mut base::ExtCtxt, span: codemap::Span,
 }
 
 
+// To print the expanded form, use `puts --pretty expanded -Z unstable-options`.
 fn body(ecx: &mut base::ExtCtxt, span: codemap::Span,
         substr: &generic::Substructure) -> P<ast::Expr>
 {
@@ -91,7 +83,7 @@ fn body(ecx: &mut base::ExtCtxt, span: codemap::Span,
                     let ref field_type = field_def.node.ty;
                     let ident_str = token::get_ident(field_ident);
                     let ident_str = ident_str.get();
-                    ecx.field_imm(span, field_ident, quote_expr!(ecx, {
+                    ecx.field_imm(span, field_ident, quote_expr!(ecx, { // For each element
 
                         if let Some(e) = ply.elements.iter()
                                          .filter(|&e| e.name == $ident_str).next() {
@@ -109,7 +101,7 @@ fn body(ecx: &mut base::ExtCtxt, span: codemap::Span,
                     }))
                 }).collect()
             );
-            quote_expr!(ecx, {
+            quote_expr!(ecx, { // The function body
 
                 let ply = __arg_0;
                 // check

@@ -4,10 +4,72 @@
 extern crate ply_plugins;
 extern crate ply;
 
-use ply::{PlyModel,TestObj};
-/*
+
+#[derive(Debug)]
+#[ply_data]
+struct S {
+	vertex: Vec<ply::Position>,
+	face: Vec<ply::Position>,
+}
+
+
+fn main() {
+	match ply::parser::parse(PLY1) {
+		Ok(ply) => {
+			// Print the parsed PLY file
+			println!("Format: {:?}, {:?}", ply.format, ply.version);
+			for e in ply.elements.iter() {
+				println!("Element \"{}\": {} instances.", e.name, e.count);
+				for p in e.props.iter() {
+					println!("    Property \"{}\": \t{:?}.", p.name, p.type_);
+				}
+				println!("  Data: {:?}", e.data);
+			}
+
+			// Fill a data structure
+			let model: Result<S, &'static str> = ply::PlyModel::new(&ply);
+			println!("\nResult: {:?}", model);
+
+		}, Err(e) => println!("Error: {}", e),
+	}
+}
+
+
+static PLY1: &'static str = r#"ply
+format ascii 1.0
+comment author: Greg Turk
+comment object: another cube
+element vertex 8
+property float x
+property float y
+property float z
+element face 7
+property float x
+property float y
+property float z
+end_header
+0 0 0
+0 0 1
+0 1 1
+0 1 0
+1 0 0
+1 0 1
+1 1 1
+1 1 0
+0 0 1
+0 1 1
+0 1 0
+1 0 0
+1 0 1
+1 1 1
+1 1 0
+"#;
+
+
+
 // http://paulbourke.net/dataformats/ply/
-static PLY: &'static str = r#"ply
+/*
+static PLY2: &'static str = r#"ply
 format ascii 1.0
 comment author: Greg Turk
 comment object: another cube
@@ -47,72 +109,5 @@ end_header
 2 3 255 255 255
 3 0 255 255 255
 2 0 0 0 0
-"#; */
-
-static PLY: &'static str = r#"ply
-format ascii 1.0
-comment author: Greg Turk
-comment object: another cube
-element vertex 8
-property float x
-property float y
-property float z
-element face 7
-property float x
-property float y
-property float z
-end_header
-0 0 0
-0 0 1
-0 1 1
-0 1 0
-1 0 0
-1 0 1
-1 1 1
-1 1 0
-0 0 1
-0 1 1
-0 1 0
-1 0 0
-1 0 1
-1 1 1
-1 1 0
 "#;
-
-#[derive(Debug)]
-#[ply_data]
-struct S {
-	vertex: Vec<ply::Position>,
-	face: Vec<ply::Position>,
-}
-
-fn main() {
-	let res = ply::parser::parse(PLY);
-	match res {
-		Ok(ply) => {
-			println!("Format: {:?}, {:?}", ply.format, ply.version);
-			for e in ply.elements.iter() {
-				println!("Element \"{}\": {} instances.", e.name, e.count);
-				for p in e.props.iter() {
-					println!("    Property \"{}\": \t{:?}.", p.name, p.type_);
-				}
-				println!("  Data: {:?}", e.data);
-			}
-		//	println!("\nData:\n");
-		//	println!("{}", ply.data);
-
-			//let obj: TestObj;
-			//println!("Result of object check: {:?}", Object::check(None::<TestObj>, &ply));
-
-		//	let res: Result<TestObj,&'static str> = PlyModel::new(&ply);
-			let res2: Result<S, &'static str> = PlyModel::new(&ply);
-			println!("Result: {:?}", res2);
-		//	match res {
-		//		Ok(data) => println!("res: {:?}", data),
-		//		Err(e) => println!("Error while parsing: {}", e),
-		//	}
-
-		}, Err(e) => println!("E: {}", e),
-	}
-	println!("Hello!");
-}
+*/
