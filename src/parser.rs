@@ -11,7 +11,7 @@ pub struct ElementSpec {
 	pub name: String,
 	pub count: usize,
 	pub props: Vec<PropertySpec>,
-	pub data: Vec<String>, // individual lines of the data
+	pub data: Vec<Vec<String>>, // individual lines of the data
 }
 
 #[derive(Debug)]
@@ -34,13 +34,11 @@ pub struct PLY {
 	//pub data: String
 }
 
-fn fill_data(elems: &mut Vec<ElementSpec>, data: &str) {
-	let mut lines: Vec<String> = data.split('\n').map(|l|l.to_string()).collect();
-	//let mut lines_iter = lines.into_iter();
+fn fill_data(elems: &mut Vec<ElementSpec>, data: Vec<Vec<String>>) {
 	let mut counter = 0us;
 	for i in 0..elems.len() {
 		let count = elems[i].count;
-		elems[i].data.push_all(lines.slice(counter, counter + count));
+		elems[i].data.push_all(&data[counter .. counter + count]);
 		counter += count;
 	}
 }
@@ -88,7 +86,13 @@ property_line -> super::PropertySpec
 end_header_line -> ()
 	= "end_header"
 
-data -> &'input str = d:.* { match_str }
+//data -> &'input str = d:.* { match_str }
+data -> Vec<Vec<String>>
+	= data_line**newline
+
+data_line -> Vec<String>
+	= nums:raw_num**white
+		{ nums.iter().map(|s|s.to_string()).collect() }
 
 
 format -> super::Format
@@ -138,6 +142,6 @@ endline -> () = white? "\n"
 white -> () = [\t ]+
 "#}
 
-
-// re-export. Maybe, there is a better way to do this.
-pub fn parse(s: &str) -> Result<PLY, String> { ply::parse(s) }
+pub fn parse(s: &str) -> Result<PLY, String> {
+	ply::parse(s)
+}

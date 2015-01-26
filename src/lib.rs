@@ -51,7 +51,7 @@ impl<T:Element> ElementVec for Vec<T> {
 pub trait Element {
 	// dummy parameter until UFCS
 	fn check(Option<Self>, &parser::ElementSpec) -> Result<(), &'static str>;
-	fn parse(&str) -> Result<Self,&'static str>;
+	fn parse(&Vec<String>) -> Result<Self,&'static str>;
 }
 
 #[derive(Debug)]
@@ -72,8 +72,8 @@ impl Element for Position {
 		Ok(())
 	}
 
-	fn parse(data: &str) -> Result<Self,&'static str> {
-		let n: Vec<f32> = data.split(' ').filter_map(|a| a.parse()).collect();
+	fn parse(line: &Vec<String>) -> Result<Self,&'static str> {
+		let n: Vec<f32> = line.iter().filter_map(|a| a.parse()).collect();
 		if n.len() != 3 {
 			Err("Wrong number of elements on a line.")
 		} else {

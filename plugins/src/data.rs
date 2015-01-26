@@ -98,7 +98,7 @@ fn body(ecx: &mut base::ExtCtxt, span: codemap::Span,
                             try!(ply::ElementVec::check(None::<$field_type>, e));
                             let mut accum = vec![];
                             for line in e.data.iter() {
-                                let res = try!(ply::Element::parse(line.as_slice()));
+                                let res = try!(ply::Element::parse(line));
                                 accum.push(res);
                             }
                             accum
