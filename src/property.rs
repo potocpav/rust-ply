@@ -1,7 +1,5 @@
 
 
-
-
 pub trait Property {
 	fn get_type() -> super::Type;
 }
