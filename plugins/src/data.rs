@@ -1,3 +1,4 @@
+#![allow(unstable)]
 
 use syntax::ast;
 use syntax::ext::base;

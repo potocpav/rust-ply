@@ -3,8 +3,6 @@
 #[plugin]
 extern crate peg_syntax_ext;
 
-use std::io::File;
-
 pub use parser::{PLY,Format,Version,ElementSpec,PropertySpec,Type};
 
 pub mod parser;
@@ -30,7 +28,7 @@ pub trait Element {
 	fn parse(&Vec<String>) -> Result<Self,&'static str>;
 }
 
-#[derive(Debug)]
+#[derive(Debug, Copy)]
 pub struct Position {
 	x: f32, y: f32, z: f32
 }

@@ -18,10 +18,10 @@ fn fill_data(elems: &mut Vec<ElementSpec>, data: Vec<Vec<String>>) {
 }
 
 
-#[derive(Debug)]
+#[derive(Debug, Copy)]
 pub enum Format { Ascii }
 
-#[derive(Debug)]
+#[derive(Debug, Copy)]
 pub struct Version (u32, u32);
 
 #[derive(Debug)]
