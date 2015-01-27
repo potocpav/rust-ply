@@ -9,9 +9,12 @@ extern crate ply;
 #[ply_data]
 struct S {
 	vertex: Vec<Position>,
-	face: Vec<Position>,
+	face: Vec<Color>,
 }
 
+#[derive(Debug, Copy)]
+#[ply_element]
+pub struct Color (f32, f32, f32);
 
 #[derive(Debug, Copy)]
 pub struct Position {
@@ -21,6 +24,7 @@ pub struct Position {
 impl ply::Element for Position {
 	fn check(_dummy: Option<Self>, spec: &ply::ElementSpec) -> Result<(), &'static str> {
 		if spec.props.len() != 3 {
+			println!("num: {}", spec.props.len());
 			return Err("Wrong number of params.")
 		}
 		for prop in spec.props.iter() {
@@ -48,7 +52,7 @@ fn main() {
 			// Print the parsed PLY file
 			println!("Format: {:?}, {:?}", ply.format, ply.version);
 			for e in ply.elements.iter() {
-				println!("Element \"{}\": {} instances.", e.name, e.count);
+				println!("Element \"{}\": {} instances.", e.name, e.data.len());
 				for p in e.props.iter() {
 					println!("    Property \"{}\": \t{:?}.", p.name, p.type_);
 				}

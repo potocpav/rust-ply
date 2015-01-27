@@ -1,17 +1,16 @@
 
 #[pub]
-parse -> super::PLY =
+parse -> (super::Format, super::Version,
+	      Vec<(usize, super::ElementSpec)>, Vec<Vec<String>>) =
 	first_line newline
 	fl:format_line newline
 	obj_info_line?
-	elements:dataspec_section newline
+	counted_elems:dataspec_section newline
 	end_header_line newline
-	data:data
+	data:data newline?
 		{{
 			let (f,v) = fl;
-			let mut elements = elements;
-			super::fill_data(&mut elements, data);
-			super::PLY { format: f, version: v, elements: elements }
+			(f, v, counted_elems, data)
 		}}
 
 first_line -> ()
@@ -23,16 +22,18 @@ format_line -> (super::Format, super::Version)
 obj_info_line -> &'input str
 	= "obj_info" white info:raw_string newline { info }
 
-dataspec_section -> Vec<super::ElementSpec>
+dataspec_section -> Vec<(usize, super::ElementSpec)>
 	= element_section**newline
 
-element_section -> super::ElementSpec
-	= e:element_line newline ps:property_line**newline
-		{ super::ElementSpec { name: e.name, count: e.count, props: ps, data: vec![] } }
+element_section -> (usize, super::ElementSpec)
+	= ce:element_line newline ps:property_line**newline {
+		let (c, mut e) = ce;
+		(c, super::ElementSpec {props: ps, ..e})
+	}
 
-element_line -> super::ElementSpec
+element_line -> (usize, super::ElementSpec)
 	= "element" white n:identifier white i:usize
-		{ super::ElementSpec { name: n, count: i, props: vec![], data: vec![] } }
+		{ (i, super::ElementSpec { name: n, props: vec![], data: vec![] }) }
 
 property_line -> super::PropertySpec
 	= "property" white t:type white n:identifier
@@ -46,7 +47,7 @@ data -> Vec<Vec<String>>
 	= data_line**newline
 
 data_line -> Vec<String>
-	= nums:raw_num**white
+	= nums:raw_num++white
 		{ nums.iter().map(|s|s.to_string()).collect() }
 
 
