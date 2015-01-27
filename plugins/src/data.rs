@@ -1,65 +1,58 @@
 #![allow(unstable)]
 
 use syntax::ast;
-use syntax::ext::base;
-use syntax::ext::build::AstBuilder;
+use syntax::ast::Mutability::MutImmutable;
+use syntax::codemap::Span;
+use syntax::ext::base::ExtCtxt;
 use syntax::ext::deriving::generic;
-use syntax::codemap;
+use syntax::ext::deriving::generic::ty;
 use syntax::parse::token;
 use syntax::ptr::P;
 
-use syntax::ext::deriving::generic::ty::{Ty,PtrTy};
-use syntax::ast::Mutability::MutImmutable;
 
-
-pub fn ply_data(ecx: &mut base::ExtCtxt, span: codemap::Span,
+pub fn ply_data(ecx: &mut ExtCtxt, span: Span,
                 meta_item: &ast::MetaItem, item: &ast::Item,
                 mut push: Box<FnMut(P<ast::Item>)>)
 {
     generic::TraitDef {
         span: span,
         attributes: Vec::new(),
-        path: generic::ty::Path {
+        path: ty::Path {
             path: vec!["ply", "PlyModel"],
             lifetime: None,
             params: Vec::new(),
             global: true,
         },
         additional_bounds: Vec::new(),
-        generics: generic::ty::LifetimeBounds::empty(),
+        generics: ty::LifetimeBounds::empty(),
         methods: vec![
             generic::MethodDef {
                 name: "new",
-                generics: generic::ty::LifetimeBounds::empty(),
+                generics: ty::LifetimeBounds::empty(),
                 explicit_self: None,
-                args: vec![generic::ty::Ptr(Box::new(
-                        generic::ty::Literal(
-                            generic::ty::Path::new(vec!["ply","parser","PLY"])
+                args: vec![ty::Ptr(Box::new(
+                        ty::Literal(
+                            ty::Path::new(vec!["ply","parser","PLY"])
                         )
-                    ), PtrTy::Borrowed(None, MutImmutable)
+                    ), ty::PtrTy::Borrowed(None, MutImmutable)
                 )],
-                ret_ty: generic::ty::Literal( // Result<Self, &'static str>
-                    generic::ty::Path {
+                ret_ty: ty::Literal( // Result<Self, &'static str>
+                    ty::Path {
                         path: vec!["std", "result", "Result"],
                         lifetime: None,
                         params: vec![
-                            Box::new(Ty::Self),
-                            Box::new(Ty::Ptr(Box::new(
-                                    generic::ty::Literal(
-                                        generic::ty::Path::new(vec!["str"])
+                            Box::new(ty::Ty::Self),
+                            Box::new(ty::Ty::Ptr(Box::new(
+                                    ty::Literal(
+                                        ty::Path::new(vec!["str"])
                                     )
-                                ), PtrTy::Borrowed(Some("'static"), MutImmutable)
+                                ), ty::PtrTy::Borrowed(Some("'static"), MutImmutable)
                             ))],
                         global: true
                     }
                 ),
-                attributes: vec![/*
-                    ecx.attribute(span.clone(), ecx.meta_list(span.clone(),
-                        token::InternedString::new("allow"),
-                        vec![ecx.meta_word(span.clone(),
-                                token::InternedString::new("unused_assignments"))]
-                    ))*/
-                ],
+                // If ever superfluous fields are allowed, check out how glium supresses warnings.
+                attributes: vec![],
                 combine_substructure: generic::combine_substructure(Box::new(body)),
             },
         ],
@@ -68,10 +61,11 @@ pub fn ply_data(ecx: &mut base::ExtCtxt, span: codemap::Span,
 
 
 // To print the expanded form, use `puts --pretty expanded -Z unstable-options`.
-fn body(ecx: &mut base::ExtCtxt, span: codemap::Span,
+// Function body expansion
+fn body(ecx: &mut ExtCtxt, span: Span,
         substr: &generic::Substructure) -> P<ast::Expr>
 {
-    let ecx: &base::ExtCtxt = ecx;
+    let ecx: &ExtCtxt = ecx;
     let self_ty = &substr.type_ident;
 
     match substr.fields {
