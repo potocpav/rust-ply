@@ -27,7 +27,7 @@ pub fn element(ecx: &mut ExtCtxt, span: Span,
         generics: ty::LifetimeBounds::empty(),
         methods: vec![
             generic::MethodDef {
-                name: "parse",
+                name: "parse_one",
                 generics: ty::LifetimeBounds::empty(),
                 explicit_self: None,
                 args: vec![ty::Ptr(Box::new( // &Vec<Self>

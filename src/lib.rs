@@ -13,10 +13,17 @@ pub trait PlyModel {
 	fn new(&parser::PLY) -> Result<Self,String>;
 }
 
-pub trait Element {
+pub trait Element: Sized {
 	// dummy parameter until UFCS
 	fn check(Option<Self>, &parser::ElementSpec) -> Result<(),String>;
-	fn parse(&Vec<String>) -> Result<Self,String>;
+	fn parse_one(&Vec<String>) -> Result<Self,String>;
+	fn parse(e: &parser::ElementSpec) -> Result<Vec<Self>,String> {
+		let mut res = Vec::with_capacity(e.data.len());
+		for l in e.data.iter() {
+			res.push(try!(Element::parse_one(l)));
+		}
+		Ok(res)
+	}
 }
 
 

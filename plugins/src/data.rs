@@ -79,15 +79,9 @@ fn body(ecx: &mut ExtCtxt, span: Span,
                     ecx.field_imm(span, field_ident, quote_expr!(ecx, {
 
                         // Construct each element. This is inside a stuct initialization.
-                        if let Some(e) = ply.elements.iter()
-                                         .filter(|&e| e.name == $ident_str).next() {
+                        if let Some(e) = ply.get_elem($ident_str.to_string()) {
                             try!(ply::ElementVec::check(None::<$field_type>, e));
-                            let mut accum = vec![];
-                            for line in e.data.iter() {
-                                let res = try!(ply::Element::parse(line));
-                                accum.push(res);
-                            }
-                            accum
+                            try!(ply::Element::parse(e))
                         } else {
                             return Err(format!("Did not find a corresponding element name."));
                         }

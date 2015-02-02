@@ -48,3 +48,9 @@ pub struct PLY {
 	pub version: Version,
 	pub elements: Vec<ElementSpec>,
 }
+
+impl PLY {
+	pub fn get_elem(&self, name: String) -> Option<&ElementSpec> {
+		self.elements.iter().filter(|&e| e.name == name).next()
+	}
+}

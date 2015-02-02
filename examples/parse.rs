@@ -35,7 +35,7 @@ impl ply::Element for Position {
 		Ok(())
 	}
 
-	fn parse(line: &Vec<String>) -> Result<Self,String> {
+	fn parse_one(line: &Vec<String>) -> Result<Self,String> {
 		let n: Vec<f32> = line.iter().filter_map(|a| a.parse()).collect();
 		if n.len() != 3 {
 			Err("Wrong number of elements on a line.".to_string())
