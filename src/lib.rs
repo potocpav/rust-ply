@@ -1,4 +1,4 @@
-#![feature(plugin)]
+#![feature(plugin,core,collections)]
 
 #[plugin]
 extern crate peg_syntax_ext;

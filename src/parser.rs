@@ -1,5 +1,4 @@
 
-
 peg_file! ply_rustpeg("ply.rustpeg");
 
 pub fn parse(s: &str) -> Result<PLY, String> {

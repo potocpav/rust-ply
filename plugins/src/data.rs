@@ -1,4 +1,3 @@
-#![allow(unstable)]
 
 use syntax::ast;
 use syntax::ast::Mutability::MutImmutable;
@@ -57,6 +56,7 @@ pub fn ply_data(ecx: &mut ExtCtxt, span: Span,
                 combine_substructure: generic::combine_substructure(Box::new(body)),
             },
         ],
+        associated_types: vec![],
     }.expand(ecx, meta_item, item, |i| push(i));
 }
 

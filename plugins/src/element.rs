@@ -1,4 +1,3 @@
-#![allow(unstable)]
 
 use syntax::ast;
 use syntax::ast::Mutability::MutImmutable;
@@ -98,6 +97,7 @@ pub fn element(ecx: &mut ExtCtxt, span: Span,
 	            combine_substructure: generic::combine_substructure(Box::new(check_body)),
 	        },
 	    ],
+        associated_types: vec![],
     }.expand(ecx, meta_item, item, |i| push(i));
 }
 
@@ -144,7 +144,7 @@ fn parse_body(ecx: &mut ExtCtxt, span: Span,
 		&generic::StaticStruct(ref definition, generic::Unnamed(ref fields)) => {
 			let field_count = fields.len();
 			let struct_expr = ecx.expr_tuple(span,
-				definition.fields.iter().enumerate().map(|(i,field_def)| {
+				definition.fields.iter().enumerate().map(|(i,_)| {
 					quote_expr!(ecx, {
 						match input[$i].parse() {
 							Some(x) => x,
@@ -177,7 +177,7 @@ fn check_body(ecx: &mut ExtCtxt, span: Span,
     //let self_ty = &substr.type_ident;
 
     match substr.fields {
-		&generic::StaticStruct(ref definition, generic::Unnamed(ref fields)) => {
+		&generic::StaticStruct(_, generic::Unnamed(ref fields)) => {
 			let field_count = fields.len();
 			quote_expr!(ecx, {
 				if $field_count == __arg_1.props.len() {
