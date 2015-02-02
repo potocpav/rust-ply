@@ -43,17 +43,14 @@ pub fn element(ecx: &mut ExtCtxt, span: Span,
                         )
                     ), ty::PtrTy::Borrowed(None, MutImmutable)
                 )],
-                ret_ty: ty::Literal( // Result<Self, &'static str>
+                ret_ty: ty::Literal( // Result<Self, String>
                     ty::Path {
                         path: vec!["Result"],
                         lifetime: None,
                         params: vec![
                             Box::new(ty::Ty::Self),
-                            Box::new(ty::Ty::Ptr(Box::new(
-                                    ty::Literal(
-                                        ty::Path::new(vec!["str"])
-                                    )
-                                ), ty::PtrTy::Borrowed(Some("'static"), MutImmutable)
+                            Box::new(ty::Literal(
+                                ty::Path::new(vec!["std","string","String"])
                             ))],
                         global: false
                     }
@@ -78,18 +75,15 @@ pub fn element(ecx: &mut ExtCtxt, span: Span,
                         )
                     ), ty::PtrTy::Borrowed(None, MutImmutable)
                 )],
-	            ret_ty: ty::Literal( // Result<Self, &'static str>
+	            ret_ty: ty::Literal( // Result<Self, String>
 	                ty::Path {
 	                    path: vec!["Result"],
 	                    lifetime: None,
 	                    params: vec![
 	                        Box::new(ty::Ty::Tuple(vec![])),
-	                        Box::new(ty::Ty::Ptr(Box::new(
-	                                ty::Literal(
-	                                    ty::Path::new(vec!["str"])
-	                                )
-	                            ), ty::PtrTy::Borrowed(Some("'static"), MutImmutable)
-	                        ))],
+	                        Box::new(ty::Literal(
+                                ty::Path::new(vec!["std","string","String"])
+                            ))],
 	                    global: false
 	                }
 	            ),
@@ -148,7 +142,7 @@ fn parse_body(ecx: &mut ExtCtxt, span: Span,
 					quote_expr!(ecx, {
 						match input[$i].parse() {
 							Some(x) => x,
-							None => return Err("Could not parse a number in the Data section.")
+							None => return Err(format!("Could not parse a number in the Data section."))
 						}
 					})
 				}).collect()
@@ -157,7 +151,7 @@ fn parse_body(ecx: &mut ExtCtxt, span: Span,
 
                 let input: &Vec<String> = __arg_0;
         		if input.len() != $field_count {
-        			return Err("The number of entries in Element is not correct.");
+        			return Err(format!("The number of entries in Element is not correct."));
         		}
 
 				Ok($self_ty $struct_expr)
@@ -183,7 +177,7 @@ fn check_body(ecx: &mut ExtCtxt, span: Span,
 				if $field_count == __arg_1.props.len() {
 					Ok(())
 				} else {
-					Err("Wrong number of properties.")
+					Err(format!("Wrong number of properties."))
 				}
 			})
         },

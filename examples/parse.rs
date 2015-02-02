@@ -22,23 +22,23 @@ pub struct Position {
 }
 
 impl ply::Element for Position {
-	fn check(_dummy: Option<Self>, spec: &ply::ElementSpec) -> Result<(), &'static str> {
+	fn check(_dummy: Option<Self>, spec: &ply::ElementSpec) -> Result<(),String> {
 		if spec.props.len() != 3 {
 			println!("num: {}", spec.props.len());
-			return Err("Wrong number of params.")
+			return Err("Wrong number of params.".to_string())
 		}
 		for prop in spec.props.iter() {
 			if prop.type_ != ply::Type::Float && prop.type_ != ply::Type::Double {
-				return Err("Wrong type of params.");
+				return Err("Wrong type of params.".to_string());
 			}
 		}
 		Ok(())
 	}
 
-	fn parse(line: &Vec<String>) -> Result<Self,&'static str> {
+	fn parse(line: &Vec<String>) -> Result<Self,String> {
 		let n: Vec<f32> = line.iter().filter_map(|a| a.parse()).collect();
 		if n.len() != 3 {
-			Err("Wrong number of elements on a line.")
+			Err("Wrong number of elements on a line.".to_string())
 		} else {
 			Ok(Position { x: n[0], y: n[1], z: n[2] })
 		}
@@ -60,7 +60,7 @@ fn main() {
 			}
 
 			// Fill a data structure
-			let model: Result<S, &'static str> = ply::PlyModel::new(&ply);
+			let model: Result<S, String> = ply::PlyModel::new(&ply);
 			println!("\nResult: {:?}", model);
 
 		},

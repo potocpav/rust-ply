@@ -36,17 +36,14 @@ pub fn ply_data(ecx: &mut ExtCtxt, span: Span,
                         )
                     ), ty::PtrTy::Borrowed(None, MutImmutable)
                 )],
-                ret_ty: ty::Literal( // Result<Self, &'static str>
+                ret_ty: ty::Literal( // Result<Self, String>
                     ty::Path {
                         path: vec!["Result"],
                         lifetime: None,
                         params: vec![
                             Box::new(ty::Ty::Self),
-                            Box::new(ty::Ty::Ptr(Box::new(
-                                    ty::Literal(
-                                        ty::Path::new(vec!["str"])
-                                    )
-                                ), ty::PtrTy::Borrowed(Some("'static"), MutImmutable)
+                            Box::new(ty::Literal(
+                                ty::Path::new(vec!["std","string","String"])
                             ))],
                         global: false
                     }
@@ -92,7 +89,7 @@ fn body(ecx: &mut ExtCtxt, span: Span,
                             }
                             accum
                         } else {
-                            return Err("Did not find a corresponding element name.");
+                            return Err(format!("Did not find a corresponding element name."));
                         }
 
                     }))
@@ -103,7 +100,7 @@ fn body(ecx: &mut ExtCtxt, span: Span,
                 let ply = __arg_0;
                 // check
         		if ply.elements.len() != $field_count {
-        			return Err("The number of elements in PlyModel is not correct.");
+        			return Err(format!("The number of elements in PlyModel is not correct."));
         		}
                 Ok($struct_expr)
 
