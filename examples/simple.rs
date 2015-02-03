@@ -10,81 +10,56 @@ extern crate ply;
 struct Model {
 	vertex: Vec<Vertex>,
 	face: Vec<Face>,
-	edge: Vec<Edge>,
 }
 
-
-#[derive(Debug, Copy)]
+#[derive(Debug)]
 #[ply_element]
 pub struct Vertex {
 	x: f32, y: f32, z: f32,
-	red: u8, green: u8, blue: u8,
 }
 
 
 #[derive(Debug)]
 #[ply_element]
-pub struct Face (Vec<i32>);
-
-
-#[derive(Debug, Copy)]
-#[ply_element]
-pub struct Edge {
-	vertex1: i32, vertex2: i32,
-	red: u8, green: u8, blue: u8,
+pub struct Face {
+	vertex_index: Vec<i32>,
 }
 
 
 fn main() {
-	match ply::parser::parse(PLY) {
+	match ply::parser::parse(PLY) { // Create an AST
 		Ok(ref ply) => {
+			// Fill in the structure from the AST
 			let model: Result<Model,_> = ply::Model::new(ply);
+			// Print the result
 			println!("\nResult: {:?}", model);
 		},
-		Err(e) => println!("Error while parsing:\n{}", e),
+		Err(e) => println!("Error while parsing:\n\t{}", e),
 	}
 }
 
 
-// http://paulbourke.net/dataformats/ply/
 static PLY: &'static str = r#"ply
 format ascii 1.0
-comment author: Greg Turk
-comment object: another cube
 element vertex 8
 property float x
 property float y
 property float z
-property uchar red
-property uchar green
-property uchar blue
-element face 7
+element face 6
 property list uchar int vertex_index
-element edge 5
-property int vertex1
-property int vertex2
-property uchar red
-property uchar green
-property uchar blue
 end_header
-0 0 0 255 0 0
-0 0 1 255 0 0
-0 1 1 255 0 0
-0 1 0 255 0 0
-1 0 0 0 0 255
-1 0 1 0 0 255
-1 1 1 0 0 255
-1 1 0 0 0 255
-3 0 1 2
-3 0 2 3
+0 0 0
+0 0 1
+0 1 1
+0 1 0
+1 0 0
+1 0 1
+1 1 1
+1 1 0
+4 0 1 2 3
 4 7 6 5 4
 4 0 4 5 1
 4 1 5 6 2
 4 2 6 7 3
 4 3 7 4 0
-0 1 255 255 255
-1 2 255 255 255
-2 3 255 255 255
-3 0 255 255 255
-2 0 0 0 0
 "#;

@@ -1,16 +1,18 @@
 
 [package]
 name = "ply"
-version = "0.0.1"
+version = "0.0.0"
 authors = ["Pavel Potocek <pavelpotocek@gmail.com>"]
+description = "Safe Polygon File Format (PLY) loading library."
+keywords = ["PLY"]
+documentation = ""
+homepage = ""
+repository = ""
+license = ""
 
-[dependencies.peg]
-git = "https://github.com/CraZySacX/rust-peg.git"
+[dependencies]
+peg = "^0.1.5"
 
 [dependencies.ply_plugins]
 path = "plugins"
 version = "*"
-
-[[bin]]
-name = "simple"
-path = "examples/simple.rs"
