@@ -83,7 +83,8 @@ fn body(ecx: &mut ExtCtxt, span: Span,
                             try!(ply::ElementVec::check(None::<$field_type>, e));
                             try!(ply::Element::parse(e))
                         } else {
-                            return Err(format!("Did not find a corresponding element name."));
+                            return Err(format!("The PLY file does not contain any element named `{}`.",
+                                    $ident_str.to_string()));
                         }
 
                     }))
@@ -94,7 +95,9 @@ fn body(ecx: &mut ExtCtxt, span: Span,
                 let ply = __arg_0;
                 // check
         		if ply.elements.len() != $field_count {
-        			return Err(format!("The number of elements in Model is not correct."));
+        			return Err(format!("The number of elements in the PLY file ({}) \
+                            does not match the number of fields in a Model ({}).",
+                            ply.elements.len(), $field_count));
         		}
                 Ok($struct_expr)
 

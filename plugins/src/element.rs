@@ -114,7 +114,7 @@ fn parse_body(ecx: &mut ExtCtxt, span: Span,
                     if let Some(p) = ply::Property::parse_prop(&mut input_it) {
                         p
                     } else {
-                        return Err(format!("The number of numbers on a line is incorrect."))
+                        return Err(format!("Error while parsing the data line with properties {:?}.", __arg_0))
                     }
 
 				})));
@@ -123,7 +123,12 @@ fn parse_body(ecx: &mut ExtCtxt, span: Span,
 
 			quote_expr!(ecx, {
                 let mut input_it = __arg_0.iter();
-				Ok($struct_expr)
+                let res = $struct_expr;
+                if let Some(extra) = input_it.next() {
+                    Err(format!("A superfluous property `{}` detected.", extra))
+                } else {
+                    Ok(res)
+                }
 			})
 
         },
@@ -136,7 +141,7 @@ fn parse_body(ecx: &mut ExtCtxt, span: Span,
                     if let Some(p) = ply::Property::parse_prop(&mut input_it) {
                         p
                     } else {
-                        return Err(format!("The number of numbers on a line is incorrect."))
+                        return Err(format!("Error while parsing the data line with properties {:?}.", __arg_0))
                     }
 
 				}));
@@ -145,7 +150,12 @@ fn parse_body(ecx: &mut ExtCtxt, span: Span,
 
 			quote_expr!(ecx, {
                 let mut input_it = __arg_0.iter();
-				Ok($self_ty $struct_expr)
+                let res = $self_ty $struct_expr;
+                if let Some(extra) = input_it.next() {
+                    Err(format!("A superfluous property `{}` detected.", extra))
+                } else {
+                    Ok(res)
+                }
 			})
 		},
         _ => {
@@ -173,7 +183,8 @@ fn check_body(ecx: &mut ExtCtxt, span: Span,
                         let ident_str = ident_str.get();
                         ecx.stmt_expr(quote_expr!(ecx, {
                             if elem.props[$i].name != $ident_str {
-                                return Err(format!("Wrong property name."));
+                                return Err(format!("Field name `{}` does not match the property name `{}` \
+                                    (in the Element `{}`).", $ident_str, elem.props[$i].name, elem.name));
                             }
                         }))
                     }).collect()
@@ -187,8 +198,8 @@ fn check_body(ecx: &mut ExtCtxt, span: Span,
 
                         let expected_type = ply::Property::get_type(None::<$prop_type>);
                         if expected_type != elem.props[$i].type_ {
-                            return Err(format!("Wrong type: struct has `{:?}`, while the file has `{:?}`.",
-                                               expected_type, elem.props[$i].type_));
+                            return Err(format!("Field type `{:?}` does not match the property type `{:?}` \
+                                (in the Element `{}`).", expected_type, elem.props[$i].type_, elem.name));
                         }
 
                     }))
@@ -198,7 +209,9 @@ fn check_body(ecx: &mut ExtCtxt, span: Span,
 
                 let elem = __arg_1;
 				if $field_count != elem.props.len() {
-					return Err(format!("Wrong number of properties."))
+					return Err(format!("Wrong number of properties in the Element `{}` (\
+                            PLY file: {}, structure: {}).",
+                            elem.name, elem.props.len(), $field_count));
 				}
                 $namecheck_block
                 $typecheck_block
@@ -207,7 +220,7 @@ fn check_body(ecx: &mut ExtCtxt, span: Span,
 			})
         },
 		_ => {
-            ecx.span_err(span, "Unable to implement `Model` on a non-structure");
+            ecx.span_err(span, "Unable to implement `Element` on a non-structure");
             ecx.expr_int(span, 0)
         }
     }
