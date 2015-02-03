@@ -6,7 +6,7 @@ use syntax::ext::base::ExtCtxt;
 use syntax::ext::build::AstBuilder;
 use syntax::ext::deriving::generic;
 use syntax::ext::deriving::generic::ty;
-//use syntax::parse::token;
+use syntax::parse::token;
 use syntax::ptr::P;
 
 
@@ -97,66 +97,57 @@ pub fn element(ecx: &mut ExtCtxt, span: Span,
 
 
 // To print the expanded form, use `--pretty expanded -Z unstable-options`.
-// Function body expansion
+// Function 'parse' body expansion
 fn parse_body(ecx: &mut ExtCtxt, span: Span,
         substr: &generic::Substructure) -> P<ast::Expr>
 {
     let ecx: &ExtCtxt = ecx;
     let self_ty = &substr.type_ident;
 
-    match substr.fields { /*
-        &generic::StaticStruct(ref definition, generic::Named(ref fields)) => {
-            let field_count = definition.fields.len();
+    match substr.fields {
+        &generic::StaticStruct(_, generic::Named(ref fields)) => {
+            let field_count = fields.len();
+			let mut initializers = Vec::with_capacity(field_count);
+            for &(ident, _) in fields.iter() {
+				initializers.push(ecx.field_imm(span, ident, quote_expr!(ecx, {
 
-            let struct_expr = ecx.expr_struct_ident(span, *self_ty,
-                fields.iter().zip(definition.fields.iter())
-                             .map(|(&(field_ident, _), field_def)| {
-                    let ref field_type = field_def.node.ty;
-                    let ident_str = token::get_ident(field_ident);
-                    let ident_str = ident_str.get();
-                    ecx.field_imm(span, field_ident, quote_expr!(ecx, {
+                    if let Some(p) = ply::Property::parse_prop(&mut input_it) {
+                        p
+                    } else {
+                        return Err(format!("The number of numbers on a line is incorrect."))
+                    }
 
-                        // Construct each element. This is inside a stuct initialization.
-                        if let Some(e) = ply.elements.iter()
-                                         .filter(|&e| e.name == $ident_str).next() {
-                            try!(ply::ElementVec::check(None::<$field_type>, e));
-                            let mut accum = vec![];
-                            for line in e.data.iter() {
-                                let res = try!(ply::Element::parse(line));
-                                accum.push(res);
-                            }
-                            accum
-                        } else {
-                            return Err("Did not find a corresponding element name.");
-                        }
+				})));
+            }
+            let struct_expr = ecx.expr_struct_ident(span, *self_ty, initializers);
 
-                    }))
-                }).collect()
-            );
-
-        },*/
-		&generic::StaticStruct(ref definition, generic::Unnamed(ref fields)) => {
-			let field_count = fields.len();
-			let struct_expr = ecx.expr_tuple(span,
-				definition.fields.iter().enumerate().map(|(i,_)| {
-					quote_expr!(ecx, {
-						match input[$i].parse() {
-							Some(x) => x,
-							None => return Err(format!("Could not parse a number in the Data section."))
-						}
-					})
-				}).collect()
-			);
 			quote_expr!(ecx, {
+                let mut input_it = __arg_0.iter();
+				Ok($struct_expr)
+			})
 
-                let input: &Vec<String> = __arg_0;
-        		if input.len() != $field_count {
-        			return Err(format!("The number of entries in Element is not correct."));
-        		}
+        },
+		&generic::StaticStruct(ref definition, generic::Unnamed(_)) => {
+            let field_count = definition.fields.len();
+			let mut initializers = Vec::with_capacity(field_count);
+            for _ in definition.fields.iter() {
+				initializers.push(quote_expr!(ecx, {
 
+                    if let Some(p) = ply::Property::parse_prop(&mut input_it) {
+                        p
+                    } else {
+                        return Err(format!("The number of numbers on a line is incorrect."))
+                    }
+
+				}));
+            }
+            let struct_expr = ecx.expr_tuple(span, initializers);
+
+			quote_expr!(ecx, {
+                let mut input_it = __arg_0.iter();
 				Ok($self_ty $struct_expr)
 			})
-		}
+		},
         _ => {
             ecx.span_err(span, "Unable to implement `PlyModel` on a non-structure");
             ecx.expr_int(span, 0)
@@ -164,21 +155,55 @@ fn parse_body(ecx: &mut ExtCtxt, span: Span,
     }
 }
 
+// Function 'check' body expansion
 fn check_body(ecx: &mut ExtCtxt, span: Span,
         substr: &generic::Substructure) -> P<ast::Expr>
 {
     let ecx: &ExtCtxt = ecx;
-    //let self_ty = &substr.type_ident;
-
     match substr.fields {
-		&generic::StaticStruct(_, generic::Unnamed(ref fields)) => {
-			let field_count = fields.len();
+        // Handle both named and unnamed structs in a single branch
+		&generic::StaticStruct(ref definition, ref fields) => {
+			let field_count = definition.fields.len();
+
+            let namecheck_block = match fields {
+                &generic::Unnamed(_)       => ecx.block(span, vec![], None),
+                &generic::Named(ref named) => ecx.block(span,
+                    named.iter().enumerate().map(|(i, &(field_ident, _))| {
+                        let ident_str = token::get_ident(field_ident);
+                        let ident_str = ident_str.get();
+                        ecx.stmt_expr(quote_expr!(ecx, {
+                            if elem.props[$i].name != $ident_str {
+                                return Err(format!("Wrong property name."));
+                            }
+                        }))
+                    }).collect()
+                , None)
+            };
+
+            let typecheck_block = ecx.block(span,
+                definition.fields.iter().enumerate().map(|(i,def)| {
+                    let ref prop_type = def.node.ty;
+                    ecx.stmt_expr(quote_expr!(ecx, {
+
+                        let expected_type = ply::Property::get_type(None::<$prop_type>);
+                        if expected_type != elem.props[$i].type_ {
+                            return Err(format!("Wrong type: struct has `{:?}`, while the file has `{:?}`.",
+                                               expected_type, elem.props[$i].type_));
+                        }
+
+                    }))
+                }).collect(), None);
+
 			quote_expr!(ecx, {
-				if $field_count == __arg_1.props.len() {
-					Ok(())
-				} else {
-					Err(format!("Wrong number of properties."))
+
+                let elem = __arg_1;
+				if $field_count != elem.props.len() {
+					return Err(format!("Wrong number of properties."))
 				}
+                $namecheck_block
+                $typecheck_block
+                Ok(())
+
 			})
         },
 		_ => {

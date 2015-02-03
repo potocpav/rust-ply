@@ -30,6 +30,12 @@ pub struct ElementSpec {
 	pub data: Vec<Vec<String>>, // individual lines of the data
 }
 
+impl ElementSpec {
+	pub fn get_prop(&self, name: String) -> Option<&PropertySpec> {
+		self.props.iter().filter(|&e| e.name == name).next()
+	}
+}
+
 #[derive(Debug)]
 pub struct PropertySpec {
 	pub name: String,
@@ -39,7 +45,7 @@ pub struct PropertySpec {
 #[derive(Debug,PartialEq)]
 pub enum Type {
 	Char, UChar, Short, UShort, Int, UInt, Float, Double,
-	List (Box<Type>, Box<Type>),
+	List (Box<Type>),
 }
 
 #[derive(Debug)]

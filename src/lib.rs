@@ -4,6 +4,7 @@
 extern crate peg_syntax_ext;
 
 pub use parser::{PLY,Format,Version,ElementSpec,PropertySpec,Type};
+pub use property::Property;
 
 pub mod parser;
 pub mod property;

@@ -42,7 +42,6 @@ property_line -> super::PropertySpec
 end_header_line -> ()
 	= "end_header"
 
-//data -> &'input str = d:.* { match_str }
 data -> Vec<Vec<String>>
 	= data_line**newline
 
@@ -61,7 +60,7 @@ type -> super::Type
 	= i:integraltype { i }
 	/ "float" { super::Type::Float }
 	/ "double" { super::Type::Double }
-	/ "list" white t:type white q:integraltype { super::Type::List (box t, box q) }
+	/ "list" white type white q:integraltype { super::Type::List (box q) } // ignore the type of the index
 
 integraltype -> super::Type
 	= "char" {   super::Type::Char }

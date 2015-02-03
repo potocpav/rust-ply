@@ -68,7 +68,7 @@ fn body(ecx: &mut ExtCtxt, span: Span,
 
     match substr.fields {
         &generic::StaticStruct(ref definition, generic::Named(ref fields)) => {
-            let field_count = definition.fields.len();
+            let field_count = fields.len();
 
             let struct_expr = ecx.expr_struct_ident(span, *self_ty,
                 fields.iter().zip(definition.fields.iter())

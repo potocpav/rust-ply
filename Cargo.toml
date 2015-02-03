@@ -10,3 +10,7 @@ git = "https://github.com/CraZySacX/rust-peg.git"
 [dependencies.ply_plugins]
 path = "plugins"
 version = "*"
+
+[[bin]]
+name = "simple"
+path = "examples/simple.rs"
