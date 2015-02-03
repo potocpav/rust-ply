@@ -149,7 +149,7 @@ fn parse_body(ecx: &mut ExtCtxt, span: Span,
 			})
 		},
         _ => {
-            ecx.span_err(span, "Unable to implement `PlyModel` on a non-structure");
+            ecx.span_err(span, "Unable to implement `Model` on a non-structure");
             ecx.expr_int(span, 0)
         }
     }
@@ -207,7 +207,7 @@ fn check_body(ecx: &mut ExtCtxt, span: Span,
 			})
         },
 		_ => {
-            ecx.span_err(span, "Unable to implement `PlyModel` on a non-structure");
+            ecx.span_err(span, "Unable to implement `Model` on a non-structure");
             ecx.expr_int(span, 0)
         }
     }

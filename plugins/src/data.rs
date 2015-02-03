@@ -18,7 +18,7 @@ pub fn ply_data(ecx: &mut ExtCtxt, span: Span,
         span: span,
         attributes: Vec::new(),
         path: ty::Path {
-            path: vec!["ply", "PlyModel"],
+            path: vec!["ply", "Model"],
             lifetime: None,
             params: Vec::new(),
             global: true,
@@ -94,14 +94,14 @@ fn body(ecx: &mut ExtCtxt, span: Span,
                 let ply = __arg_0;
                 // check
         		if ply.elements.len() != $field_count {
-        			return Err(format!("The number of elements in PlyModel is not correct."));
+        			return Err(format!("The number of elements in Model is not correct."));
         		}
                 Ok($struct_expr)
 
             })
         },
         _ => {
-            ecx.span_err(span, "Unable to implement `PlyModel` on a non-structure");
+            ecx.span_err(span, "Unable to implement `Model` on a non-structure");
             ecx.expr_int(span, 0)
         }
     }

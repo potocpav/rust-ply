@@ -38,23 +38,10 @@ pub struct Edge {
 fn main() {
 	match ply::parser::parse(PLY) {
 		Ok(ref ply) => {
-
-			// Print the parsed PLY file
-			println!("Format: {:?}, {:?}", ply.format, ply.version);
-			for e in ply.elements.iter() {
-				println!("Element \"{}\": {} instances.", e.name, e.data.len());
-				for p in e.props.iter() {
-					println!("    Property \"{}\": \t{:?}.", p.name, p.type_);
-				}
-				println!("  Data: {:?}", e.data);
-			}
-
-			// Fill a data structure
-			let model: Result<Model, String> = ply::PlyModel::new(ply);
+			let model: Result<Model,_> = ply::Model::new(ply);
 			println!("\nResult: {:?}", model);
-
 		},
-		Err(e) => println!("Error:\n{}", e),
+		Err(e) => println!("Error while parsing:\n{}", e),
 	}
 }
 

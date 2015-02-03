@@ -10,7 +10,7 @@ pub mod parser;
 pub mod property;
 
 
-pub trait PlyModel {
+pub trait Model {
 	fn new(&parser::PLY) -> Result<Self,String>;
 }
 
