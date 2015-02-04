@@ -1,14 +1,14 @@
 
 [package]
 name = "ply"
-version = "0.0.0"
+version = "0.0.1"
 authors = ["Pavel Potocek <pavelpotocek@gmail.com>"]
 description = "Safe Polygon File Format (PLY) loading library."
-keywords = ["PLY"]
-documentation = ""
-homepage = ""
-repository = ""
-license = ""
+keywords = ["PLY", "Blender"]
+documentation = "https://github.com/potocpav/rust-ply"
+homepage =      "https://github.com/potocpav/rust-ply"
+repository =    "https://github.com/potocpav/rust-ply"
+license = "MIT"
 
 [dependencies]
 peg = "^0.1.5"
