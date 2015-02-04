@@ -51,7 +51,7 @@ The genericity of the PLY format is now obvious: there can be any number of prop
 We create the structures that can be used to store the elements of the cube:
 
 ```rust
-#[derive(Debug)]
+#[derive(Debug,Copy)]
 #[ply_element]
 pub struct Vertex {
 	x: f32, y: f32, z: f32,
@@ -79,13 +79,13 @@ struct Model {
 
 The `#[ply_data]` line creates an implementation of the `ply::Model` trait, that contains the first function that we are actually going to use in this simple example:
 
-`ply::Model::new(&parser::PLY) -> Result<Self,String>`
+`ply::Model::new(&ply::PLY) -> Result<Self,String>`
 
 Now that the structures are specified, we are free to do some parsing:
 
 ```rust
 fn main() {
-	match ply::parser::parse(PLY) { // Create an AST
+	match ply::parse(PLY) { // Create an AST
 		Ok(ref ply) => {
 			// Fill in the structure from the AST
 			let model: Result<Model,_> = ply::Model::new(ply);

@@ -69,7 +69,7 @@ pub fn element(ecx: &mut ExtCtxt, span: Span,
 						params: vec![Box::new(ty::Self)],
 						global: false
 					}
-	            ), ty::Ptr(Box::new( // &parser::ElementSpec
+	            ), ty::Ptr(Box::new( // &ElementSpec
                         ty::Literal(
                             ty::Path::new(vec!["ply","ElementSpec"])
                         )

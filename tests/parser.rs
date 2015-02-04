@@ -57,6 +57,6 @@ end_header
 "#;
 
 #[test]
-fn test1() { assert!(ply::parser::parse(TEST_STR1).is_ok()); }
+fn test1() { assert!(ply::parse(TEST_STR1).is_ok()); }
 #[test]
-fn test2() { assert!(ply::parser::parse(TEST_STR2).is_ok()); }
+fn test2() { assert!(ply::parse(TEST_STR2).is_ok()); }

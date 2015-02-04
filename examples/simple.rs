@@ -12,7 +12,7 @@ struct Model {
 	face: Vec<Face>,
 }
 
-#[derive(Debug)]
+#[derive(Debug,Copy)]
 #[ply_element]
 pub struct Vertex {
 	x: f32, y: f32, z: f32,
@@ -27,7 +27,7 @@ pub struct Face {
 
 
 fn main() {
-	match ply::parser::parse(PLY) { // Create an AST
+	match ply::parse(PLY) { // Create an AST
 		Ok(ref ply) => {
 			// Fill in the structure from the AST
 			let model: Result<Model,_> = ply::Model::new(ply);
