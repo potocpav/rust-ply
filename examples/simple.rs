@@ -6,7 +6,7 @@ extern crate ply;
 
 
 #[derive(Debug)]
-#[ply_data]
+#[ply_model]
 struct Model {
 	vertex: Vec<Vertex>,
 	face: Vec<Face>,

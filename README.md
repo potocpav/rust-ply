@@ -70,14 +70,14 @@ Now, we can specify a structure that holds the whole model:
 
 ```rust
 #[derive(Debug)]
-#[ply_data]
+#[ply_model]
 struct Model {
 	vertex: Vec<Vertex>,
 	face: Vec<Face>,
 }
 ```
 
-The `#[ply_data]` line creates an implementation of the `ply::Model` trait, that contains the first function that we are actually going to use in this simple example:
+The `#[ply_model]` line creates an implementation of the `ply::Model` trait, that contains the first function that we are actually going to use in this simple example:
 
 `ply::Model::new(&ply::PLY) -> Result<Self,String>`
 

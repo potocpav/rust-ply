@@ -8,7 +8,7 @@ use std::old_io::File;
 
 
 #[derive(Debug)]
-#[ply_data]
+#[ply_model]
 struct Model {
 	vertex: Vec<Vertex>,
 	face: Vec<Face>,
@@ -59,7 +59,7 @@ impl ply::Element for Face {
 fn main() {
 	// Load a file
 	let path = Path::new("examples/monkey.ply");
-    let mut file = File::open(&path).unwrap();
+	let mut file = File::open(&path).unwrap();
 	let text = file.read_to_string().unwrap();
 
 	match ply::parse(&text) { // Create an AST

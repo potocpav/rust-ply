@@ -10,7 +10,7 @@ use syntax::parse::token;
 use syntax::ptr::P;
 
 
-pub fn ply_data(ecx: &mut ExtCtxt, span: Span,
+pub fn ply_model(ecx: &mut ExtCtxt, span: Span,
                 meta_item: &ast::MetaItem, item: &ast::Item,
                 mut push: Box<FnMut(P<ast::Item>)>)
 {
