@@ -1,6 +1,7 @@
 #![feature(plugin,core,collections)]
 
-#[plugin]
+#![plugin(peg_syntax_ext)]
+
 extern crate peg_syntax_ext;
 
 pub use parser::{PLY,Format,Version,ElementSpec,PropertySpec,Type,parse};

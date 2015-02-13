@@ -75,7 +75,7 @@ fn body(ecx: &mut ExtCtxt, span: Span,
                              .map(|(&(field_ident, _), field_def)| {
                     let ref field_type = field_def.node.ty;
                     let ident_str = token::get_ident(field_ident);
-                    let ident_str = ident_str.get();
+                    let ident_str = &*ident_str;
                     ecx.field_imm(span, field_ident, quote_expr!(ecx, {
 
                         // Construct each element. This is inside a stuct initialization.

@@ -18,7 +18,7 @@ impl<P: Property> Property for Vec<P> {
 
 	fn parse_prop<'a,T>(it: &mut T) -> Option<Self> where
 			T: Iterator<Item=&'a String> {
-		if let Some(count) = it.next().and_then(|s| s.parse()) {
+		if let Some(count) = it.next().and_then(|s| s.parse().ok()) {
 			let mut ret = Vec::with_capacity(count);
 			for _ in 0..count {
 				if let Some(p) = Property::parse_prop(it) {
@@ -39,7 +39,7 @@ macro_rules! property_type { ($t:ty, $i:ident) => (
 		}
 		fn parse_prop<'a,T>(it: &mut T) -> Option<Self> where
 				T: Iterator<Item=&'a String> {
-			it.next().and_then(|v| v.parse())
+			it.next().and_then(|v| v.parse().ok())
 		}
 	}
 )}

@@ -1,6 +1,6 @@
-#![feature(plugin,core)]
+#![feature(plugin)]
 
-#[plugin]
+#![plugin(ply_plugins)]
 extern crate ply_plugins;
 extern crate ply;
 

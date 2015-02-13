@@ -1,6 +1,6 @@
-#![feature(plugin,core,collections,path,io)]
+#![feature(plugin,path,io)]
 
-#[plugin]
+#![plugin(ply_plugins)]
 extern crate ply_plugins;
 extern crate ply;
 
@@ -44,10 +44,10 @@ impl ply::Element for Face {
 			if l.len() < 3 {
 				return Err("Cannot make a triangle out of less than 3 points.".to_string());
 			}
-			let v1: u32 = try!(l[1].parse().ok_or("Can't parse a value.".to_string()));
-			let v2: u32 = try!(l[2].parse().ok_or("Can't parse a value.".to_string()));
+			let v1: u32 = try!(l[1].parse().map_err(|_|"Can't parse a value.".to_string()));
+			let v2: u32 = try!(l[2].parse().map_err(|_|"Can't parse a value.".to_string()));
 			for i in l[2..].iter() {
-				let v3: u32 = try!(i.parse().ok_or("Can't parse a value.".to_string()));
+				let v3: u32 = try!(i.parse().map_err(|_|"Can't parse a value.".to_string()));
 				res.push(Face {v1: v1, v2: v2, v3: v3});
 			}
 		}

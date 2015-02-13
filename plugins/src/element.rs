@@ -180,7 +180,7 @@ fn check_body(ecx: &mut ExtCtxt, span: Span,
                 &generic::Named(ref named) => ecx.block(span,
                     named.iter().enumerate().map(|(i, &(field_ident, _))| {
                         let ident_str = token::get_ident(field_ident);
-                        let ident_str = ident_str.get();
+                        let ident_str = &*ident_str;
                         ecx.stmt_expr(quote_expr!(ecx, {
                             if elem.props[$i].name != $ident_str {
                                 return Err(format!("Field name `{}` does not match the property name `{}` \
