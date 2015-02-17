@@ -14,7 +14,7 @@ Add this to the crate root:
 ```rust
 #![feature(plugin)]
 
-#[plugin]
+#![plugin(ply_plugins)]
 extern crate ply_plugins;
 extern crate ply;
 ```
